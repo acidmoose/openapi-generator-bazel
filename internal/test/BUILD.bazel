@@ -41,3 +41,10 @@ openapi_generator(
         "Integer": "java.math.BigDecimal",
     },
 )
+
+openapi_generator(
+    name = "petstore_templates",
+    generator = "go",
+    spec = "petstore.yaml",
+    template_directory= ":templates"
+)

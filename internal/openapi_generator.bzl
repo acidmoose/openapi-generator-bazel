@@ -76,6 +76,10 @@ def _new_generator_command(ctx, declared_dir, rjars):
         gen_cmd += " --engine {package}".format(
             package = ctx.attr.engine,
         )
+    if ctx.file.template_directory:
+        gen_cmd += " -t {template_dir}".format(
+            template_dir = ctx.file.template_directory.path,
+        )
 
     # fixme: by default, openapi-generator is rather verbose. this helps with that but can also mask useful error messages
     # when it fails. look into log configuration options. it's a java app so perhaps just a log4j.properties or something
@@ -91,6 +95,7 @@ def _impl(ctx):
     inputs = [
         ctx.file.openapi_generator_cli,
         ctx.file.spec,
+        ctx.file.template_directory,
     ] + cjars.to_list() + rjars.to_list()
 
     # TODO: Convert to run
@@ -157,6 +162,9 @@ _openapi_generator = rule(
         "invoker_package": attr.string(),
         "model_package": attr.string(),
         "additional_properties": attr.string_dict(),
+        "template_directory": attr.label(
+            allow_single_file = True,
+        ),
         "system_properties": attr.string_dict(),
         "engine": attr.string(),
         "type_mappings": attr.string_dict(),
